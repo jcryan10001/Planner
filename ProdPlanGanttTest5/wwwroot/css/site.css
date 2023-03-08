@@ -1,0 +1,211 @@
+﻿body {
+    overflow: hidden;
+}
+
+.planner-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#gantt_here {
+    flex-grow: 1;
+}
+
+.gantt_grid_scale .gantt_grid_head_cell,
+.gantt_task .gantt_task_scale .gantt_scale_cell {
+    font-weight: bold;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.folder_row {
+    font-weight: bold;
+}
+
+.gantt_row.highlighted_resource, .gantt_row.highlighted_resource.odd {
+    background-color: rgba(72,240,160, 0.6);
+}
+/* .gantt_row.highlighted_resource, .gantt_row.highlighted_resource.odd .released{
+        background-color: #45be41;
+}
+.gantt_row.highlighted_resource, .gantt_row.highlighted_resource.odd .planned {
+        background-color: #34b0cb;
+}
+.gantt_row.highlighted_resource, .gantt_row.highlighted_resource.odd .orderlvl {
+       background-color: #c0e1d7;
+}*/
+
+.gantt_task_cell.week_end {
+    background-color: #e8e8e87d;
+}
+.gantt_task_row.gantt_selected .gantt_task_cell.week_end {
+    background-color: #e8e8e87d !important;
+}
+
+
+.group_row,
+.group_row.odd,
+.gantt_task_row.group_row {
+    background-color: rgba(232, 232, 232, 0.6);
+}
+.gantt_row.releasedd, .gantt_row.releasedd.odd {
+    background-color: #45be41;
+}
+.gantt_row.plannedd, .gantt_row.plannedd.odd {
+    background-color: #34b0cb;
+}
+.gantt_row.sales-order, .gantt_row.sales-order.odd {
+        background-color: #c0e1d7;
+}
+
+.resource-select-panel .gantt_layout_content {
+    line-height: 35px;
+    text-align: right;
+    padding-right: 15px;
+    overflow: hidden !important;
+}
+
+.resource-select {
+    padding: 3px;
+    margin-left: 13px;
+}
+
+.column_overload .gantt_histogram_fill {
+    background-color: #ffa9a9;
+}
+
+.column_overload.gantt_histogram_cell {
+    background-color: #ffa9a97d;
+}
+.column_not_working.gantt_histogram_cell {
+    background-color: #e8e8e87d;
+}
+.column_normal.gantt_histogram_cell {
+    background-color: #a0ffa07d;
+}
+.column_overload .gantt_histogram_label {
+    color: red;
+}
+
+.column_not_working.gantt_task_cell {
+    background-color: #e8e8e87d;
+}
+.column_normal.gantt_task_cell {
+    background-color: #a0ffa07d;
+}
+.column_partial.gantt_task_cell {
+    background-image: linear-gradient(135deg, #a0ffa07d 10%, #e8e8e87d 10%, #e8e8e87d 50%, #a0ffa07d 50%, #a0ffa07d 60%, #e8e8e87d 60%, #e8e8e87d 100%);
+    background-size: 7.07px 7.07px;
+}
+
+.resource_marker {
+    text-align: center;
+}
+
+.resource_marker div {
+    width: 28px;
+    height: 28px;
+    line-height: 29px;
+    display: inline-block;
+    border-radius: 15px;
+    color: #FFF;
+    margin: 3px;
+}
+
+.resource_marker.workday_ok div {
+    background: #51c185;
+}
+
+.resource_marker.workday_over div {
+    background: #ff8686;
+}
+
+.owner-label {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    display: inline-block;
+    border: 1px solid #cccccc;
+    border-radius: 25px;
+    background: #e6e6e6;
+    color: #6f6f6f;
+    margin: 0 3px;
+    font-weight: bold;
+}
+
+.gantt_task_line.gantt_bar_task.released {
+    background-color: #45be41;
+}
+.gantt_task_line.gantt_bar_task.planned {
+    background-color: #34b0cb;
+}
+.gantt_task_line.gantt_bar_task.sales {
+    background-color: #c0e1d7;
+}
+
+.gantt_bar_project.gantt_project.production-order {
+    background: black;
+    color: white;
+}
+    .gantt_bar_project.gantt_project.production-order.released {
+        background-color: #45be41;
+    }
+    .gantt_bar_project.gantt_project.production-order.planned {
+        background-color: #34b0cb;
+    }
+    .gantt_bar_project.gantt_project.production-order.sales {
+        background-color: #c0e1d7;
+    }
+
+.gantt_bar_project.gantt_project.production-order-stage {
+    background: #6f6f6f;
+    color: white;
+}
+
+.gantt_bar_project.gantt_project.sales-order {
+    background: #c0e1d7;
+    color: white;
+}
+
+.gantt_bar_task.gantt_task_line.project-number {
+    background: #ffc020;
+    color: black;
+}
+
+.c-error {
+    width: 500px;
+    font-size: small;
+    font-weight: normal;
+    color: red;
+}
+
+.btn-group-toggle .btn-secondary:not(:disabled):not(.disabled).active {
+    background-color: #0062cc;
+    border-color: #005cbf;
+}
+
+/* Always show Completion chevron */
+.gantt_task_line .gantt_task_progress_drag {
+    display: block;
+    pointer-events: none;
+}
+.deadline {
+    position: absolute;
+/*    border-radius: 12px;
+    border: 2px solid #585858;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;*/
+    width: 31px;
+    height: 28px;
+    margin-left: 2px;
+    margin-top: 3px;
+    z-index: 1;
+    background: url(images/calendar-xmark-solid.svg) center no-repeat;
+}
+

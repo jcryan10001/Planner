@@ -1,0 +1,55 @@
+4) Main Filter - Select date type for date range search. Due Date, order date etc.
+
+5) Maybe non-released orders be grouped into a "Planned" group. -- lets use faded colour for just planned
+
+6) Onscreen - Filter resources based on selection of Sales Order/Production order
+
+7) Save details back to project.
+-- Basic version done - need to check business logic on updating other docs
+
+22) Add proper error modal after LoadFlatTasks fails
+
+23) ...
+
+////Issues////
+
+503) ...
+
+//Business Logic
+1004) ...
+
+////DONE////
++++1) Show duration in hours
++++2) Main Filter for top Gantt - filter by sales order or production order or BP.
++++3) Main filter - checkbox to show planned orders (in addition to released)
++++8) Resources shown as a tree with resource groups
++++9) If user selects object in Documents/Tasks Gantt, hilight affected cells/ row headers in resource
++++11) Potentially use the Resource Group -> Resource -> Allocated Tasks hierarchy.
++++12) Have Project number as an optional grouping in top gantt
++++13) Load correct resource calendars from SAP and use in planning board and calculations
++++14) Display Date header with row for MMM/YYYY and row for DD
++++15) Disable the task popup until we know what to do with it - it needs to be specifically coded for our app.
++++16) Model the last queried criteria such that reload can occur
++++17) Add Lockout and Modal for Loading Data (initial)
++++18) Add Lockout and Modal for Loading Data (after save/refresh)
++++19) Add Animated Loading Bar for loading data - no progress indication possible
++++20) Add a proper Bootstrap modal for post-load indication
++++21) Split resources by Warehouse and display only active/used resources in bottom pane
+-- To avoid downloading all permutations of Resource x Warehouse, we need to derive this view based
+-- on the loaded tasks - this means that we must manage the contents of our ResourceStore after
+-- task load, which has not seemed to be easy in the past.
++++500) Resource group total hours needs formatting to max 2 d.p.
++++501) Capacity server needs to cull rows that would send a zero capacity to the client (because client presumes zero)
++++502) Body needs "Overflow: Hidden" css to stop displayiong browser scrollbars.
++++1001) SAP Projects have a master plan date - we should try and add some validation logic and visual indicators.
++++1002) When selecting a task or marker within a project, load vertical project date markers
++++1004) After moving a task that lies within a stage, align sibling tasks to same date range (because SAP B1 uses stage to control date of children)
++++1003) After moving/sizing a task that lies within a project - clip to the project boundary - raise a message explaining
+
+////SKIPPED/ALTERED////
+---7) Add a Show all resources check when filtered.
+------> Use an option that can optionally filter onscreen Tasks or Resources based on selection
+---10) If user selects a resource or a cell in resources, hide top gantt, open new gantt beneath with every document/task that affects the row/cell
+------> Let's just use the task binding in the resource view - duplicate info, but it makes sense
+---8) Can resource load cells be tracked back to component allocations?
+------> Actually popping open the rows can identify the contributing components.

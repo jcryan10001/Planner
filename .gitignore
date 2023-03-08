@@ -1,0 +1,22 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ProdPlanGanttTest5/bin
+/ProdPlanGanttTest5/obj
+/.vs
+/ProdPlanGanttTest5/wwwroot/js/Planner.js
+/ProdPlanGanttTest5/wwwroot/js/Planner.js.map
+/ProdPlanGanttTest5/wwwroot/js/PlannerUI.js
+/ProdPlanGanttTest5/wwwroot/js/PlannerUI.js.map
+/ProdPlanGanttTest5/wwwroot/js/site.js
+/ProdPlanGanttTest5/wwwroot/js/site.js.map
+/ProdPlanGanttTest5/.config
+/ProdPlanGanttTest5/log
+/ProdPlanGanttTest5/Properties/PublishProfiles/FolderProfile.pubxml.user
+/SAPB1Tools/.vs
+/SAPB1Tools/bin
+/SAPB1Tools/obj
+/SAPB1Tools/Stratus.Common.SAPB1Tools.csproj.user
+/ProdPlanGanttTest5/ProdPlanGanttTest5.csproj.user
+*.bak

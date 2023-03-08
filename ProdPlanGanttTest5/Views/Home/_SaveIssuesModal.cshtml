@@ -1,0 +1,36 @@
+﻿<div class="modal" id="save-issues-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save</h5>
+            </div>
+            <div class="modal-body">
+                <div id="newLoader" style="margin: auto; position: relative; text-align: center;"></div>
+                <p class="alert alert-primary" id="save-message">Completed: <span id="save-num-saved">0</span>/<span id="save-todo-count">0</span><span id="save-message-issues"> Issues: <span id="save-num-faulted">0</span></span></p>
+                <table class="table" id="save-issues-table">
+                    <thead><tr><th>PrO#</th><th>Error</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr class="template" data-prodocentry="0">
+                            <th class="c-prodocnum">000000</th>
+                            <th><div class="c-error">Some Error</div></th>
+                            <th class="c-action">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" name="action" value="R" autocomplete="off" checked="checked" class="i-retry" /> Retry
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="radio" name="action" value="I" autocomplete="off" /> Ignore
+                                    </label>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save-fail" id="btn-save-retry">Retry</button> <button type="button" class="btn btn-secondary btn-save-fail" id="btn-save-ignoreall">Ignore All</button>
+                <button type="button" class="btn btn-secondary btn-save-ok" id="SaveCloseBtn" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

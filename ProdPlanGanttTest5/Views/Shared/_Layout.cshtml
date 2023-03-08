@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Production Planner</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="/js/lib/DHX/codebase/dhtmlxgantt.css?v=7.1.3">
+    <link rel="stylesheet" href="/js/lib/DHX/codebase/common/controls_styles.css?v=7.1.3">
+    <link href="~/js/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/js/lib/bootstrap-3.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <link href="https://cdn.syncfusion.com/ej2/ej2-popups/styles/material.css" rel="stylesheet" />
+
+    <!-- Syncfusion ASP.NET Core controls scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.syncfusion.com/ej2/20.2.43/dist/ej2.min.js"></script>
+    <script src="~/js/lib/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="/js/lib/DHX/codebase/dhtmlxgantt.js"></script>
+    @*<script src="~/js/index.js" ></script>*@
+
+</head>
+<body>
+    <script src="~/js/lib/require.js"></script>
+    <script>
+        requirejs.config({
+            baseUrl: '/js',
+            paths: {
+                moment: 'lib/moment.min',
+                loglevel: 'lib/loglevel.min',
+                loglevelremote: 'lib/loglevel-plugin-remote.min',
+
+                page_index: 'index'
+            }
+        });
+        require([
+            "loglevel",
+            "loglevelremote"
+        ], function (log, logremote) {
+            try {
+                log.setLevel('debug');
+            } catch (e) {
+                console.log(e);
+            }
+            logremote.apply(log, {
+                url: '/Home/Log',
+                method: 'POST',
+                format: logremote.json,
+                level: 'info'
+            });
+        });
+    </script>
+    @RenderBody()
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <!-- Syncfusion Script Manager -->
+    @Html.EJS().ScriptManager()
+    <!-- Syncfusion ASP.NET Core Script Manager -->
+    <ejs-scripts>
+    </ejs-scripts>
+
+@(await RenderSectionAsync("AfterEJSScripts", false))
+
+</body>
+</html>

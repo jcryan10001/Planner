@@ -1,0 +1,126 @@
+﻿@using DHX.Gantt.Controllers
+@model PlannerViewModel
+
+@{
+    var criteria = Model.criteria;
+}
+<div class="modal" id="query-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog  modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Query</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="query-update-form">
+                    <div class="form-row">
+                        <strong class="col-12">Codes and Statuses:</strong>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Business Partner</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="bpstart" placeholder="From Code" value="@criteria.bpstart" />
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="bpend" placeholder="To Code" value="@criteria.bpend" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Project Number</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="projectstart" placeholder="From Code" value="@criteria.projectstart" />
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="projectend" placeholder="To Code" value="@criteria.projectend" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Sales Order Number</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="sostart" placeholder="From Order #" value="@criteria.sostart" />
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="soend" placeholder="To Order #" value="@criteria.soend" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Production Order Number</label>
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="postart" placeholder="From PO #" value="@criteria.postart" />
+                        </div>
+                        <div class="form-group col-3">
+                            <input class="form-control" name="poend" placeholder="To PO #" value="@criteria.poend" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Production Order Statuses</label>
+                        </div>
+                        <div class="form-group col-4">
+                            <select class="form-control" name="postatus">
+                                <option value="R" selected="@(criteria.postatus == "R")">Released</option>
+                                <option value="P" selected="@(criteria.postatus == "P")">Planned</option>
+                                <option value="PR" selected="@(criteria.postatus == "PR")">Planned and Released</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <strong class="col-12">Dates:</strong>
+                    </div>
+                    <div class="form-row" style="display: none">
+                        <div class="form-group col-4">
+                            <label>Date Type</label>
+                        </div>
+                        <div class="form-group col-4">
+                            <select class="form-control" name="datetype">
+                                <option value="PO" selected="@(criteria.datetype == "PO")">Production Date</option>
+                                <option value="SO" selected="@(criteria.datetype == "SO")">Order Due Date</option>
+                                <option value="Project" selected="@(criteria.datetype == "Project")">Project Due Date</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Date Range</label>
+                        </div>
+                        <div class="form-group col-4 date" data-provide="datepicker">
+                            <div class="input-group">
+                                <input class="form-control" name="datestart" placeholder="Date From" value="@criteria.datestart" data-date-format="dd/mm/yyyy" />
+                                <div class="input-group-append"><span class="input-group-text">🗓</span></div>
+                            </div>
+                        </div>
+                        <div class="form-group col-4 date" data-provide="datepicker">
+                            <div class="input-group">
+                                <input class="form-control" name="dateend" placeholder="Date To" value="@criteria.dateend" data-date-format="dd/mm/yyyy" />
+                                <div class="input-group-append"><span class="input-group-text">🗓</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Work Window</label><br />
+                            <small>Ensure a number of days from today's date appears in the time line. Only occurs when 'Date To' is in the future or recent history.</small>
+                        </div>
+                        <div class="form-group col-2">
+                            <input class="form-control" name="workwindow" placeholder="# Days" value="@criteria.workwindow" /><br />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bt-update-query">Update</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

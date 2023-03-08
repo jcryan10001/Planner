@@ -1,0 +1,419 @@
+﻿@model PlannerViewModel
+@using System;
+@using ProdPlanGanttTest5.Services;
+@inject DataService _ds;
+@using Newtonsoft.Json;
+@using System.Text.Json;
+
+
+
+<link rel="stylesheet" type="text/css" href="~/css/Styles.css" />
+
+@(await Html.PartialAsync("./_LoginDialogModal"))
+@(await Html.PartialAsync("./_SaveIssuesModal"))
+@(await Html.PartialAsync("./_WarningModal"))
+@(await Html.PartialAsync("./_LoadingModals"))
+
+
+@{
+
+    double CP;
+    var sizing = new double[] { 5, 5 };
+
+    var confirmanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Zoom };
+    var confirmanimation2 = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Zoom };
+    var confirmanimation3 = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.Zoom };
+    List<object> items = new List<object>();
+    items.Add(new { text = "Log-out" });
+
+    @*    List<object> GPdata = new List<object>();
+        items.Add(new { text = "production-order"});
+        items.Add(new { text = "sales-order" });
+        items.Add(new { text = "project-number" });*@
+var GPdata = new string[] { "production-order", "sales-order", "project-number" };
+
+List<object> items2 = new List<object>();
+items2.Add(new { text = "None" });
+items2.Add(new { text = "Tasks" });
+items2.Add(new { text = "Resources" });
+items2.Add(new { text = "logg" });
+
+var data12 = new string[] { "Badminton", "Basketball", "Cricket", "Football", "Golf", "Gymnastics", "Hockey", "Tennis" };
+@*var confirmbutton = new
+{
+    content = "Login",
+    isPrimary = true,
+    iconCss = "a-submitLogin"
+};
+var confirmbutton1 = new
+{
+    content = "Close",
+    iconCss = "a-closebutton"
+};*@
+
+
+List<GraphDataPoint> dataSource = await _ds.GetProBarchart();
+List<GraphDataPoint> dataSource2 = await _ds.GetProBarchart2();
+string dataSourceString = System.Text.Json.JsonSerializer.Serialize(dataSource);
+string dataSourceString2 = System.Text.Json.JsonSerializer.Serialize(dataSource2);
+List<string> dbName = await _ds.GetDBName();
+var dbstr = dbName[0].ToString();
+
+
+
+var dateRangeMin = dataSource.Select(x => x.theDate).Min<DateTime>();
+var dateRangeMax = dataSource.Select(x => x.theDate).Max<DateTime>();
+var dateRangeMin2 = dataSource2.Select(x => x.theDate).Min<DateTime>();
+var dateRangeMax2 = dataSource2.Select(x => x.theDate).Max<DateTime>();
+    @* var stardDate = DateTime.ParseExact(dateRangeMin.ToString(), "yyyyMMdd",null);
+        var endDate = DateTime.ParseExact(dateRangeMax.ToString(), "yyyyMMdd", null);*@
+    var loadStart = dateRangeMin;
+    var loadend = dateRangeMax;
+    //change this before finalising////////////////////////////////////////
+    var todayy = DateTime.Now;
+    //var todayy = DateTime.Parse(todayyy);
+    int dplusMonth = 0;
+    if (dateRangeMax > todayy.AddMonths(3) && dateRangeMin < todayy.AddMonths(-3))
+    {
+        loadStart = todayy.AddMonths(-3);
+        loadend = todayy.AddMonths(3);
+        dplusMonth = 3;
+
+    }
+    else if (dateRangeMax > todayy.AddMonths(2) && dateRangeMin < todayy.AddMonths(-2))
+    {
+        loadStart = todayy.AddMonths(-2);
+        loadend = todayy.AddMonths(2);
+        dplusMonth = 2;
+    }
+
+    else if (dateRangeMax > todayy.AddMonths(1) && dateRangeMin < todayy.AddMonths(-1))
+    {
+        loadStart = todayy.AddMonths(-1);
+        loadend = todayy.AddMonths(1);
+        dplusMonth = 1;
+    }
+
+    var value = new object[] { dateRangeMax, dateRangeMin };
+    var value2 = new object[] { dateRangeMax2, dateRangeMin2 };
+    //List<filterDataList> filterList = await _ds.GetFilteredData();
+    //string filterjslist = System.Text.Json.JsonSerializer.Serialize(filterList);
+    List<string> BPdata = null;//filterList.Select(x => x.BP).ToList<string>();
+    List<string> PNdata = null;
+    List<string> Itmdata = null;///filterList.Select(x => x.PN).ToList<string>();
+    List<int> SOdata = null;//await _ds.GetSOdata();//filterList.Select(x => x.SO).ToList<int>();
+    List<int> POdata = null;//filterList.Select(x => x.PO).ToList<int>();
+
+
+    //Standard Run Capacities from PlanningData - this
+    //will be used to initialize calendars to a known state before
+    //loading customweeks, in this way the server need not send
+    //standard weeks
+    var plandata = Model.ResourcePlanData;
+    var plandatabyresource = plandata.GroupBy(pd => pd.ResCode);
+}
+
+<script>
+
+    var srcapacities = {
+        @foreach (var G in plandatabyresource) {
+                @Html.Raw($"\"{G.Key}\": [")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 1)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 2)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 3)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 4)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 5)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 6)?.SngRunCap ?? 0}, ")
+                    @Html.Raw($"{G.FirstOrDefault(rd => rd.WeekDay == 7)?.SngRunCap ?? 0} ")
+                @Html.Raw("],")
+        }
+    };
+</script>
+<div id="loginbox" style="display: none; margin-top: 200px">
+    <div class="body1">
+        <div class="login">
+            <div class="avatar">
+            </div>
+            <h2>Login</h2>
+            <h3 id="err">Welcome back</h3>
+            <form class="login-form">
+                <div class="textbox">
+                    <ejs-textbox id="Username" cssClass="e-cmm" placeholder="Username" floatLabelType="Auto"></ejs-textbox>
+                </div>
+                <div class="textbox">
+                   <ejs-textbox id="Password" cssClass="e-cmm" placeholder="Password" floatLabelType="Auto" type="password"></ejs-textbox>
+                </div>
+                <button id="loginBt" style="border-radius: 66px; width: 169px;" type="button">LOGIN</button>
+                <a href="https://website.com">Forgot your credentials?</a>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="mBody">
+    <div class="planner-container" style="overflow:scroll">
+        <div class="dropdown-menu dropdown-menu-sm" id="production-order-context-menu">
+            <a class="dropdown-item a-forward-plan" href="javascript:void(0);" title="Arrange tasks (or stages) in a head to tail fashion ignoring resource demand of other tasks.">Forward Plan</a>
+            <a class="dropdown-item a-clear-selections" href="javascript:void(0);" title="Clear Selections">Clear Selections</a>
+            <!--<a class="dropdown-item" href="javascript:void(0);">Smart Forward Plan</a>-->
+        </div>
+        <div class="dropdown-menu dropdown-menu-sm" id="fallback-context-menu">
+            <a class="dropdown-item a-clear-selections" href="javascript:void(0);" title="Clear Selections">Clear Selections</a>
+        </div>
+        <nav class="navbar-nav ms-auto navbar-expand-sm" style="margin-bottom: 0px; max-height: 75px;">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand nav-logo" style="margin-left: 25px; width: fit-content; height: fit-content;">
+                        <img src="~/css/images/OCHIBA LOGO HORIZ GREY.svg" id="leftLogo">
+                    </a>
+
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item nav-link active">
+                        <label id="toprighttxt1" style="color:black;" for="left"></label>
+                    </li>
+                    <li class="nav-item nav-link active">
+                        <ejs-dropdownbutton id="logodp" items="items" content=" " iconPosition="Left" iconCss="e-btn-sb-icons e-user-icon"></ejs-dropdownbutton>
+                    </li>
+
+                </ul>
+
+            </div>
+        </nav>
+
+        <nav id="mainNav2" style="background-color: #4D4D4D; margin-bottom: 0px; height: 20px;" class="navbar navbar-expand-lg navbar-custom">
+            <div class="container-fluid" style="overflow:hidden;">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav navbar-left">
+                        <li class="nav-item nav-link active">
+                            <div href="#" class="navbar-text">@dbstr</div>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                        <li class="nav-item nav-link active">
+                            <div href="#" id="toprighttxt" class="navbar-text">updated 1min ago</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav id="mainNav" style="background-color: #B9B9B9; min-height: 51px; margin-bottom: 0px; max-height: 51px; overflow: hidden; border-bottom: 1px solid black; flex-wrap: wrap; " class="navbar navbar-expand-lg navbar-custom">
+            <div class="container-fluid" style="margin-top: -10px;">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar" style="min-height:51px; max-height:51px;">
+                        <li class="nav-item active" style="height: 30px;padding-right:10px;">
+                            <i class="grpby"></i>
+                        </li>
+                        <li class="nav-item active" style="padding-left: 10px;">
+
+                            <ejs-multiselect id="gbdropdown" mode="CheckBox" placeholder="Select Group by" cssClass="e-custom e-custom2" valueTemplate="<span>${Name}</span>" dataSource="@GPdata"
+                                             allowFiltering="false">
+                                <e-multiselect-fields text="Name" value="Code"></e-multiselect-fields>
+
+                            </ejs-multiselect>
+                            <label class="dplabel" for="left" id="dplabel" style="display:none;"></label>
+                            <ejs-button id="dpbutton" class="hide" type="button"></ejs-button>
+                        </li>
+                        <div class="vr"></div>
+                        <li class="nav-item active">
+                            <ejs-button id="datebtn" type="button" content=" Range " iconCss="e-btn-sb-icons e-date-icon" iconPosition="Left"></ejs-button>
+                        </li>
+                        <li class="nav-item active" id="resetbtnNav" style="display:none">
+                        </li>
+
+                        <div class="vr"></div>
+
+                        <li class="nav-item active">
+                            <ejs-switch href="#" cssClass="bar-color" id="filter_status" checked="false">Planned</ejs-switch>
+                            <ejs-switch href="#" cssClass="bar-color" id="filter_statusR" checked="true">Released</ejs-switch>
+                        </li>
+                        <li class="nav-item active hide"><ejs-switch href="#" id="filter_none" cssClass="bar-color" checked="false">None</ejs-switch></li>
+                        <li class="nav-item active"><ejs-switch href="#" cssClass="bar-color" id="filter_tasks" checked="false">Tasks</ejs-switch></li>
+                        <li class="nav-item active"><ejs-switch href="#" cssClass="bar-color" id="filter_resources" checked="false">Resources</ejs-switch></li>
+
+                        <div class="vr"></div>
+
+                        <li class="nav-item active">
+                            <ejs-button id="bt-query" type="button" iconCss="e-btn-sb-icons e-filters-icon" iconPosition="Left" content="More Filters" cssClass="greyyy"></ejs-button>
+                        </li>
+                        <li class="nav-item active" id="updateBtn1">
+                            <ejs-button id="updater" class="greyy" content="Apply" iconCss="e-btn-sb-icons e-update-icon" iconPosition="Left" type="button"></ejs-button>
+                        </li>
+                        <li class="nav-item active" id="updateBtn" style="display:none;">
+                            <ejs-button id="ResetFiltersbtn" content="Reset Filters" iconCss="e-btn-sb-icons e-reset-icon" iconPosition="Left"></ejs-button>
+                        </li>
+                        <div class="vr"></div>
+                        <li class="nav-item active">
+                            <ejs-button id="bt-edit" type="button" cssClass="greyyy" iconCss="e-btn-sb-icons e-edit-icon" iconPosition="Left" content="Edit"></ejs-button>
+
+                            <ejs-button id="bt-save" type="button" style="display:none;" content="Save"></ejs-button>
+
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div role="navigation" class="btn-toolbar hide">
+            <label class="startdate" style="display:none;"></label>
+            <label class="enddate" style="display:none;"></label>
+            <label class="finalquery" style="display:none;"></label>
+            <label id="plannedChk" style="display:none;"></label>
+            <label id="range01" style="display:none;"></label>
+            <label id="counter01" style="display:block;">0</label>
+            <label id="dmin" style="display:none;">@loadStart</label>
+            <label id="dmax" style="display:none;">@loadend</label>
+            <label id="dplusMonth" style="display:none;">@dplusMonth</label>
+            <label id="plannedbool" style="display:none;"></label>
+            <label id="releasedbool" style="display:none;"></label>
+            <label class="dplabel" id="dplabel" style="display:none;"></label>
+            <label id="sourcestr" style="display:none;">@dataSourceString</label>
+            <label id="sourcestr2" style="display:none;">@dataSourceString2</label>
+            <label id="resDate" style="display:none;"></label>
+        </div>
+        <nav id="filterNav" style="background-color: #B9B9B9; margin-bottom: 0px; min-height: 45px; max-height: 45px; overflow: hidden; display: none; border-bottom: 2px solid black; flex-wrap: wrap; " class="navbar navbar-expand-lg navbar-custom">
+            <div class="container-fluid" style="margin-top: -10px;">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar mx-auto" style="min-height:45px; max-height:45px;">
+
+                        <li class="nav-item active">
+                            <ejs-multiselect id="BPdropdown" enablePersistence="true" placeholder="Business Partner" sortOrder="Syncfusion.EJ2.DropDowns.SortOrder.Ascending" cssClass="e-custommultiselect e-custom e-custom2" dataSource="@BPdata"
+                                             allowFiltering="true" filterType="Contains" mode="CheckBox">
+                                <e-multiselect-fields text="BPDesc" value="BPCode"></e-multiselect-fields>
+
+                            </ejs-multiselect>
+
+                        </li>
+                        <li class="nav-item active">
+                            <ejs-multiselect id="Itmdropdown" enablePersistence="true" placeholder="Item Master" sortOrder="Syncfusion.EJ2.DropDowns.SortOrder.Ascending" cssClass="e-custommultiselect e-custom e-custom2" dataSource="@Itmdata"
+                                             allowFiltering="true" filterType="Contains" mode="CheckBox">
+                                <e-multiselect-fields text="Name" value="BP"></e-multiselect-fields>
+                            </ejs-multiselect>
+
+                        </li>
+
+                        <li class="nav-item active">
+                            <ejs-multiselect id="PNdropdown" placeholder="Project Number" sortOrder="Syncfusion.EJ2.DropDowns.SortOrder.Ascending" cssClass="e-custommultiselect e-custom e-custom2" dataSource="@PNdata"
+                                             allowFiltering="true" filterType="Contains" mode="CheckBox">
+                                <e-multiselect-fields text="Name" value="Code"></e-multiselect-fields>
+                            </ejs-multiselect>
+                        </li>
+
+                        <li class="nav-item active">
+                            <ejs-multiselect id="SOdropdown" placeholder="Sales Order" sortOrder="Syncfusion.EJ2.DropDowns.SortOrder.Ascending" cssClass="e-custommultiselect e-custom e-custom2" dataSource="@SOdata"
+                                             allowFiltering="true" filterType="Contains" mode="CheckBox">
+                                <e-multiselect-fields text="Name" value="Code"></e-multiselect-fields>
+                            </ejs-multiselect>
+                        </li>
+                        <li class="nav-item active">
+                            <ejs-multiselect id="POdropdown" placeholder="Production Order" sortOrder="Syncfusion.EJ2.DropDowns.SortOrder.Ascending" cssClass="e-custommultiselect" dataSource="@POdata"
+                                             allowFiltering="true" filterType="Contains" mode="CheckBox">
+                                <e-multiselect-fields text="Name" value="Code"></e-multiselect-fields>
+                            </ejs-multiselect>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+
+        <div class="container-fluid" style="width:100%" id="range1">
+            <ejs-rangenavigator id="rangeNavigator" href="ranger1" width="100%" labelIntersectAction="Hide" allowSnapping="true" valueType="DateTime" skeletonType="Date" skeleton="dd/MM/yyyy" labelFormat="MM-yy" intervalType="Days" interval="7" xName="date" yName="Pr Orders" value="value">
+                <e-rangenavigator-tooltip enable="true" format="WW-yy" displayMode="Always" id="tooltip">
+                </e-rangenavigator-tooltip>
+                <e-rangenavigator-rangenavigatorseriescollection>
+                    <e-rangenavigator-rangenavigatorseries xName="theDate" yName="freq" dataSource="dataSource" type="Area">
+                    </e-rangenavigator-rangenavigatorseries>
+                </e-rangenavigator-rangenavigatorseriescollection>
+                <e-rangenavigator-periodselectorsettings position="Top">
+                    <e-periods>
+                        <e-period interval="1" intervalType="Weeks" text="1W"></e-period>
+                        <e-period interval="2" intervalType="Weeks" text="2W"></e-period>
+                        <e-period interval="1" intervalType="Months" text="1M"></e-period>
+                        <e-period interval="3" intervalType="Months" text="3M"></e-period>
+                        <e-period interval="6" intervalType="Months" text="6M"></e-period>
+                        <e-period interval="1" intervalType="Years" text="1Y"></e-period>
+                        <e-period text="All"></e-period>
+                    </e-periods>
+                </e-rangenavigator-periodselectorsettings>
+            </ejs-rangenavigator>
+        </div>
+
+        <div id="progressbar_control" style="display:none">
+            <div id="SaveLoaderbtn"></div>
+            <ejs-button id="logoutbtn" content="Logout"></ejs-button>
+        </div>
+
+        <div id="target1">
+            @*        <ejs-button id="confirmBtn" class="dlgbtn hide" type="button"></ejs-button>
+                 <ejs-dialog id="confirm_dialogg" animationSettings="confirmanimation" allowDragging="true" visible="false" target="#target1" width="500px" minHeight="250px" header="Sign in" showCloseIcon="true">
+                    <e-content-template>
+                        <div id="copyTo">
+                            <div id="err"></div>
+                            <div id="success" style="display:none" class="bg-success"></div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6">
+                                    <i class="user1"></i>
+                                    <ejs-textbox id="Username1" cssClass="e-custom" width="400px" placeholder="Username" floatLabelType="Auto"></ejs-textbox>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6">
+                                    <ejs-textbox id="Password1" cssClass="e-custom" width="400px" placeholder="Password" floatLabelType="Auto" type="password"></ejs-textbox>
+                                </div>
+                            </div>
+                        </div>
+                    </e-content-template>
+                    <e-dialog-buttons id="r1">
+                        <e-dialog-dialogbutton buttonModel="confirmbutton"></e-dialog-dialogbutton>
+                        <e-dialog-dialogbutton buttonModel="confirmbutton1"></e-dialog-dialogbutton>
+                    </e-dialog-buttons>
+
+                </ejs-dialog>*@
+
+            <ejs-dialog id="confirm_dialog3" animationSettings="confirmanimation3" allowDragging="true" visible="false" target="#target1" width="500px" minHeight="250px" header="Loading.." showCloseIcon="false">
+                <e-content-template>
+                    <div class="control-section">
+                        <div class="row linear-parent">
+                            <div id="circularSegment2" style="left:68px;">
+                            </div>
+                        </div>
+                    </div>
+
+                </e-content-template>
+            </ejs-dialog>
+            <ejs-dialog id="confirm_dialog2" animationSettings="confirmanimation2" allowDragging="true" visible="false" target="#target1" width="500px" minHeight="250px" header="Loading.." showCloseIcon="false">
+                <e-content-template>
+                    <div class="control-section" id="copyFrom">
+                        <div class="row linear-parent">
+                            <div id="circularSegment" style="left:68px;">
+                            </div>
+                        </div>
+                    </div>
+                </e-content-template>
+            </ejs-dialog>
+        </div>
+        <div id='element'></div>
+        <div class="Mainlayout" style="z-index:1;" id="MainLayout">
+            <div id="defaultLayout" style="padding-right:10px">
+                <div class="container-fluid">
+                    <div id='gantt_here'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section AfterEJSScripts {
+<script>require(["page_index"]);</script>
+}
